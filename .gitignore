@@ -1,0 +1,18 @@
+### VS Code
+export/*
+.vscode/*
+.haxelib/
+*.code-workspace
+# historico local qu enão deveria ser compartilhado.
+.history
+.ionide
+# ! significa que um arquivo deve ser adicionado independentemente de ter sido ignorado antes.
+# Inclusive para permitir que terceiros utilizem configurações já definidas ajustadas para o projeto.
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# arquivo oxipng exe, baixe oxipng em https://github.com/shssoichiro/oxipng/releases/latest, copie-o na pasta raiz do projeto e execute o arquivo bat.
+# usado para otimizar imagens sem perder a qualidade.
+oxipng.exe
