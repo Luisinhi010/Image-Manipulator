@@ -3,7 +3,7 @@
 
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Site" file="Site" main="Main" version="1.0.0" company="Luis Claudio" />
+	<app title="Image" file="Image" main="Main" version="1.0.0" company="Luis Claudio" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
