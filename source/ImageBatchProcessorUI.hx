@@ -8,6 +8,7 @@ import flixel.addons.ui.FlxUIList;
 
 class ImageBatchProcessorUI extends flixel.addons.ui.FlxUIState
 {
+    var processedImage:FlxSprite;
     override function create()
     {
         super.create();
@@ -25,8 +26,11 @@ class ImageBatchProcessorUI extends flixel.addons.ui.FlxUIState
         ImageBatchProcessor.onImageProcessedCallback = function(processedBitmapData:BitmapData)
         {
             // Update the UI to show the processed image
-            var processedImage = new FlxSprite(0, 0, processedBitmapData);
+            if (processedImage != null)
+            remove(processedImage);
+            processedImage = new FlxSprite(0, 0, processedBitmapData);
             processedImage.x = FlxG.width-processedImage.width;
+            processedImage.screenCenter(Y);
             add(processedImage);
         };
 

@@ -10,6 +10,7 @@ using StringTools;
 
 class ImageBatchProcessor
 {
+    
 	public static var onImageProcessedCallback: BitmapData -> Void;
 
     public static function processImages(folderPath:String, outputPath:String, processImageFunc:BitmapData->BitmapData):Void
