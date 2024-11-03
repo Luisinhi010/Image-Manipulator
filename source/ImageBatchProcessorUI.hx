@@ -1,3 +1,4 @@
+import openfl.filters.BitmapFilterQuality;
 import flixel.FlxBasic;
 import openfl.geom.Point;
 import openfl.filters.BlurFilter;
@@ -29,18 +30,16 @@ class ImageBatchProcessorUI extends FlxUIState
 
 	var wallpaper:FlxSprite;
 	var havewallpaper:Bool = true;
-	var wallpaperVisible:Bool;
 
 	override function create()
 	{
 		super.create();
 		ImageBatchProcessor.initThreads();
-
 		FlxG.cameras.list[0].bgColor = 0xFF4E4E4E;
 
 		try {
 			var bitmapData:BitmapData = BitmapData.fromFile('${Sys.getEnv("AppData")}\\Microsoft\\Windows\\Themes\\TranscodedWallpaper');
-			var blurFilter:BlurFilter = new BlurFilter(10, 10);
+			var blurFilter:BlurFilter = new BlurFilter(20, 20, 20);
 			bitmapData.applyFilter(bitmapData, bitmapData.rect, new Point(), blurFilter);
 			wallpaper = new FlxSprite()
 			.loadGraphic(bitmapData);
@@ -50,14 +49,13 @@ class ImageBatchProcessorUI extends FlxUIState
 		if (havewallpaper) {
 			wallpaper.scrollFactor.set(0, 0);
 			wallpaper.antialiasing = true;
-			wallpaper.visible = wallpaperVisible;
+			wallpaper.visible = false;
 			wallpaper.scale.set(FlxG.width / wallpaper.width, FlxG.height / wallpaper.height);
 			wallpaper.updateHitbox();
 			add(wallpaper);
 		
 			var changebgbutton:FlxButton = new FlxButton(10, 690, 'Change Bg', function() {
-				wallpaperVisible = FlxG.save.data.wallpaperVisible = !wallpaperVisible;
-				wallpaper.visible = wallpaperVisible;
+				wallpaper.visible = !wallpaper.visible;
 			});
 			changebgbutton.alpha = 0.6;
 			changebgbutton.label.alpha = 0.6;
@@ -107,7 +105,7 @@ class ImageBatchProcessorUI extends FlxUIState
 			{
 				if (!(member is FlxSprite))
 					return;
-				var lastImage:FlxSprite = cast member;
+				var lastImage:FlxSprite = cast(member, FlxSprite);
 				if (lastImage != null)
 				{
 					lastImage.visible = false;

@@ -212,13 +212,7 @@ class ImageBatchProcessor
 		});
 	}
 
-	public static function extractARGB(bitmapData:BitmapData, x:Int, y:Int):
-		{
-			a:Int,
-			r:Int,
-			g:Int,
-			b:Int
-		}
+	public static function extractARGB(bitmapData:BitmapData, x:Int, y:Int):ImageData
 	{
 		var argb:UInt = bitmapData.getPixel32(x, y);
 		return {
