@@ -5,7 +5,6 @@ export/*
 *.code-workspace
 # local history that shouldn't be shared.
 .history
-.ionide
 # ! means that a file should be added regardless of whether it was ignored before.
 # Including to allow third parties to use already defined settings adjusted for the project.
 !.vscode/settings.json

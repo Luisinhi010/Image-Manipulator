@@ -1,9 +1,9 @@
-import openfl.filters.BitmapFilterQuality;
-import flixel.FlxBasic;
+package luis;
+
+import luis.back.Handler;
 import openfl.geom.Point;
 import openfl.filters.BlurFilter;
 import flixel.ui.FlxButton;
-import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.text.FlxText;
 import openfl.display.BitmapData;
@@ -12,7 +12,6 @@ import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxUIInputText;
-import flixel.addons.ui.FlxUIList;
 import flixel.tweens.FlxTween;
 import flixel.addons.ui.FlxUIState;
 
@@ -26,7 +25,6 @@ class ImageBatchProcessorUI extends FlxUIState
 	static var tween:FlxTween;
 	public static var consoleText:FlxText;
 	public static var imagename:FlxText;
-	public static var async:Bool = true;
 
 	var wallpaper:FlxSprite;
 	var havewallpaper:Bool = true;
@@ -34,27 +32,31 @@ class ImageBatchProcessorUI extends FlxUIState
 	override function create()
 	{
 		super.create();
-		ImageBatchProcessor.initThreads();
+		Handler.initThreads();
 		FlxG.cameras.list[0].bgColor = 0xFF4E4E4E;
 
-		try {
+		try
+		{
 			var bitmapData:BitmapData = BitmapData.fromFile('${Sys.getEnv("AppData")}\\Microsoft\\Windows\\Themes\\TranscodedWallpaper');
 			var blurFilter:BlurFilter = new BlurFilter(20, 20, 20);
 			bitmapData.applyFilter(bitmapData, bitmapData.rect, new Point(), blurFilter);
-			wallpaper = new FlxSprite()
-			.loadGraphic(bitmapData);
-		} catch (e:Dynamic) {
+			wallpaper = new FlxSprite().loadGraphic(bitmapData);
+		}
+		catch (e:Dynamic)
+		{
 			havewallpaper = false;
 		}
-		if (havewallpaper) {
+		if (havewallpaper)
+		{
 			wallpaper.scrollFactor.set(0, 0);
 			wallpaper.antialiasing = true;
 			wallpaper.visible = false;
 			wallpaper.scale.set(FlxG.width / wallpaper.width, FlxG.height / wallpaper.height);
 			wallpaper.updateHitbox();
 			add(wallpaper);
-		
-			var changebgbutton:FlxButton = new FlxButton(10, 690, 'Change Bg', function() {
+
+			var changebgbutton:FlxButton = new FlxButton(10, 690, 'Change Bg', function()
+			{
 				wallpaper.visible = !wallpaper.visible;
 			});
 			changebgbutton.alpha = 0.6;
@@ -79,9 +81,9 @@ class ImageBatchProcessorUI extends FlxUIState
 
 		var effectsList:Array<String> = [
 			"Brightness to Alpha",
-			"Oversample Sprite",
-			"Grayscale Effect",
-			"Chromatic Effect",
+			"Oversample",
+			"Grayscale",
+			"Chromatic",
 			"Pixelation",
 			"Dithering"
 		];
@@ -99,7 +101,7 @@ class ImageBatchProcessorUI extends FlxUIState
 		consoleText.setFormat(null, 16, 0xffffff, FlxTextAlign.LEFT);
 		uiGroup.add(consoleText);
 
-		ImageBatchProcessor.onImageProcessedCallback = function(processedBitmapData:BitmapData)
+		Handler.onImageProcessedCallback = function(processedBitmapData:BitmapData)
 		{
 			for (member in members)
 			{
@@ -112,6 +114,7 @@ class ImageBatchProcessorUI extends FlxUIState
 					lastImage.alpha = 0;
 					lastImage.kill();
 					remove(lastImage, true);
+					lastImage = null;
 				}
 			}
 
@@ -128,21 +131,7 @@ class ImageBatchProcessorUI extends FlxUIState
 		var inputFolder:String = inputFolderInput.text;
 		var outputFolder:String = outputFolderInput.text;
 		var selectedEffect:String = effectsDropdown.selectedLabel;
-		switch (selectedEffect)
-		{
-			case "Brightness to Alpha":
-				ImageBatchProcessor.turnBrightnessToAlpha(inputFolder, outputFolder);
-			case "Oversample Sprite":
-				ImageBatchProcessor.oversampleSprite(inputFolder, outputFolder);
-			case "Grayscale Effect":
-				ImageBatchProcessor.grayscaleEffect(inputFolder, outputFolder);
-			case "Chromatic Effect":
-				ImageBatchProcessor.chromaticAberrationEffect(inputFolder, outputFolder);
-			case "Pixelation":
-				ImageBatchProcessor.applyPixelation(inputFolder, outputFolder, 4, false);
-			case "Dithering":
-				ImageBatchProcessor.applyDithering(inputFolder, outputFolder);
-		}
+		Handler.applyEffect(inputFolder, outputFolder, selectedEffect);
 	}
 
 	public static function updateConsoleText(message:String, isError:Bool = false):String
