@@ -15,11 +15,16 @@ class Handler
 	public static var threads:Array<Thread> = [];
 	private static var __threadCycle:Int = 0;
 
+	public static function init() {
+		initThreads();
+		ScriptManager.initialize();
+	}
+
 	public static function initThreads():Void
 		for (i in 0...4)
 			threads.push(Thread.createWithEventLoop(function() Thread.current().events.promise()));
 
-	public static function execAsync(func:Void->Void, async:Bool = false):Void
+	public static function execAsync(func:Void->Void, async:Bool = true):Void
 	{
 		if (!async)
 		{
@@ -88,7 +93,9 @@ class Handler
 	}
 
 	public static function applyEffect(inputPath:String, outputPath:String, selectedEffect:String):Void {
-		var effectFunction = null;
+    var effectFunction = null;
+    var isScript = false;
+    
 		switch (selectedEffect)
 		{
 			case "Brightness to Alpha":
@@ -103,6 +110,11 @@ class Handler
 				effectFunction = ImageEffects.applyPixelation.bind();
 			case "Dithering":
 				effectFunction = ImageEffects.applyDithering;
+			default:
+				isScript = true;
+				effectFunction = function(bitmapData:BitmapData) {
+                return ScriptManager.applyScriptEffect(bitmapData, selectedEffect);
+            }
 		}
 		processImages(inputPath, outputPath, effectFunction);
 	}

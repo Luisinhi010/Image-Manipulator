@@ -1,5 +1,6 @@
 package luis;
 
+import luis.back.ScriptManager;
 import luis.back.Handler;
 import openfl.geom.Point;
 import openfl.filters.BlurFilter;
@@ -20,7 +21,7 @@ class ImageBatchProcessorUI extends FlxUIState
 	var inputFolderInput:FlxUIInputText;
 	var outputFolderInput:FlxUIInputText;
 	var effectsDropdown:FlxUIDropDownMenu;
-	var uiGroup:FlxUIGroup;
+	public var uiGroup:FlxUIGroup;
 
 	static var tween:FlxTween;
 	public static var consoleText:FlxText;
@@ -32,7 +33,6 @@ class ImageBatchProcessorUI extends FlxUIState
 	override function create()
 	{
 		super.create();
-		Handler.initThreads();
 		FlxG.cameras.list[0].bgColor = 0xFF4E4E4E;
 
 		try
@@ -87,6 +87,15 @@ class ImageBatchProcessorUI extends FlxUIState
 			"Pixelation",
 			"Dithering"
 		];
+
+		// Load script effects
+		var scriptEffects = ScriptManager.getAvailableEffects();
+		for (effect in scriptEffects)
+		effectsList.push(effect);
+
+		// Sort effects alphabetically
+		effectsList.sort((a, b) -> a.toLowerCase() < b.toLowerCase() ? -1 : 1);
+
 		effectsDropdown = new FlxUIDropDownMenu(outputFolderInput.x, outputFolderInput.y + outputFolderInput.height + 10,
 			FlxUIDropDownMenu.makeStrIdLabelArray(effectsList, true));
 		uiGroup.add(effectsDropdown);
@@ -121,8 +130,9 @@ class ImageBatchProcessorUI extends FlxUIState
 			var processedImage:FlxSprite = new FlxSprite(0, 0, processedBitmapData);
 			processedImage.x = FlxG.width - processedImage.width;
 			processedImage.screenCenter(Y);
+			processedImage.alpha = 0.5;
 			processedImage.moves = false;
-			add(processedImage);
+			insert(members.indexOf(uiGroup) -1, processedImage);
 		};
 	}
 
