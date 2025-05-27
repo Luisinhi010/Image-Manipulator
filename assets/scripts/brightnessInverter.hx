@@ -1,6 +1,7 @@
 // Invert the brightness of the image
 
 // Creates an output image
+//self note, dont need to create a new var with the output name, this makes the ScriptManager.hx return nothing.
 output = new BitmapData(input.width, input.height, true, 0x00000000);
 
 // Processes each pixel
