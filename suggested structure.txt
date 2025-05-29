@@ -1,0 +1,10 @@
+source/
+├── luis/
+│ ├── effects/ # Effects implemented as classes
+│ │ ├── color/ # Color-related effects
+│ │ ├── filter/ # Filter effects
+│ │ └── transform/ # Transformation effects
+│ ├── types/ # Type definitions
+│ ├── utils/ # Utility classes
+│ └── back/ # Backend and management
+└── Main.hx

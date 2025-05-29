@@ -14,13 +14,14 @@ import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.tweens.FlxTween;
-import flixel.addons.ui.FlxUIState;
+import flixel.FlxState;
 
-class ImageBatchProcessorUI extends FlxUIState
+class ImageBatchProcessorUI extends FlxState
 {
 	var inputFolderInput:FlxUIInputText;
 	var outputFolderInput:FlxUIInputText;
 	var effectsDropdown:FlxUIDropDownMenu;
+
 	public var uiGroup:FlxUIGroup;
 
 	static var tween:FlxTween;
@@ -91,7 +92,7 @@ class ImageBatchProcessorUI extends FlxUIState
 		// Load script effects
 		var scriptEffects = ScriptManager.getAvailableEffects();
 		for (effect in scriptEffects)
-		effectsList.push(effect);
+			effectsList.push(effect);
 
 		// Sort effects alphabetically
 		effectsList.sort((a, b) -> a.toLowerCase() < b.toLowerCase() ? -1 : 1);
@@ -106,25 +107,30 @@ class ImageBatchProcessorUI extends FlxUIState
 		imagename = new FlxText(10, FlxG.height - 20);
 		imagename.setFormat(null, 16, 0xffffff, FlxTextAlign.LEFT);
 		uiGroup.add(imagename);
+
 		consoleText = new FlxText(10, imagename.y - 10);
 		consoleText.setFormat(null, 16, 0xffffff, FlxTextAlign.LEFT);
 		uiGroup.add(consoleText);
 
 		Handler.onImageProcessedCallback = function(processedBitmapData:BitmapData)
 		{
+			var imagesToRemove:Array<FlxSprite> = [];
+
 			for (member in members)
 			{
-				if (!(member is FlxSprite))
-					return;
-				var lastImage:FlxSprite = cast(member, FlxSprite);
-				if (lastImage != null)
+				if (member is FlxSprite && member != wallpaper && !Std.isOfType(member, FlxUIGroup) && !Std.isOfType(member, FlxText)
+					&& !Std.isOfType(member, FlxButton))
 				{
-					lastImage.visible = false;
-					lastImage.alpha = 0;
-					lastImage.kill();
-					remove(lastImage, true);
-					lastImage = null;
+					imagesToRemove.push(cast(member, FlxSprite));
 				}
+			}
+
+			for (img in imagesToRemove)
+			{
+				img.visible = false;
+				img.alpha = 0;
+				img.kill();
+				remove(img, true);
 			}
 
 			var processedImage:FlxSprite = new FlxSprite(0, 0, processedBitmapData);
@@ -132,7 +138,7 @@ class ImageBatchProcessorUI extends FlxUIState
 			processedImage.screenCenter(Y);
 			processedImage.alpha = 0.5;
 			processedImage.moves = false;
-			insert(members.indexOf(uiGroup) -1, processedImage);
+			insert(members.indexOf(uiGroup) - 1, processedImage);
 		};
 	}
 
@@ -155,7 +161,7 @@ class ImageBatchProcessorUI extends FlxUIState
 			tween.cancel();
 
 		tween = FlxTween.tween(consoleText, {alpha: 0}, 0.8, {
-			startDelay: 1,
+			startDelay: 5,
 			onComplete: function(twn:FlxTween)
 			{
 				tween = null;
